@@ -65,6 +65,7 @@ V1 successfully established the static HTML/CSS foundation and stayed within the
 **What I learned:**  
 Running the page is part of verification. Code can look correct in the editor but still needs to be rendered and inspected before I decide that it works.
 
+
 ## Entry 3 — V2 Visual Refinement
 
 **Date / Week / Day:** September 29, 2026 — Week 3
@@ -96,3 +97,36 @@ V2 created a stronger visual identity while preserving the simple MVP structure.
 
 **What I learned:**  
 Iteration works better when I inspect a real output and request specific changes instead of asking AI to generally “make it better.” I also learned that visual polish and application functionality can be developed separately.
+
+
+## Entry 4 — V3 Vital Documents Logic and Verification
+
+**Date / Week / Day:** September 29, 2026 — Week 3
+
+**Activity:** Built and tested the first interactive decision flow for NextStep.
+
+**Goal:** Add working JavaScript functionality to the Vital Documents category while building safeguards into the decision logic.
+
+**Prompt:**  
+I instructed Claude to add functionality only to Vital Documents. The user identifies which documents they currently have, chooses a missing document they want help with, and receives three general next steps. I also required the program to stop instead of guessing when the information was uncertain or contradictory.
+
+**Why I prompted it this way:**  
+I wanted to build one complete interaction before expanding the same pattern to the other categories. This kept the project easier to understand, test, and control.
+
+**AI result:**  
+Claude created a two-question Vital Documents flow using JavaScript. The program compares the user's selections against the documents NextStep currently covers, identifies what is missing, and displays three general next steps for the selected document.
+
+**What I noticed:**  
+The JavaScript uses arrays, functions, event listeners, DOM manipulation, and conditional logic to control the flow while keeping everything on one HTML page.
+
+**What I questioned or verified:**  
+I tested a normal path, uncertain input, conflicting answers, the all-documents boundary case, reset behavior, and the mobile layout. I confirmed that the program stops rather than guessing when the user selects “I'm Not Sure” or gives contradictory answers such as selecting a document together with “None of These.”
+
+**What changed in the next iteration:**  
+After testing the functionality, I improved the code comments so important HTML, CSS, JavaScript, accessibility, and safeguard logic are easier for me to understand and explain.
+
+**Final result:**  
+The Vital Documents flow works as intended and includes working safeguards for incomplete or conflicting information.
+
+**What I learned:**  
+Testing should include more than the expected user path. Trying uncertain, contradictory, and boundary inputs helped me verify that the safeguards actually change the program's behavior instead of existing only as a warning.

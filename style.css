@@ -1,12 +1,14 @@
 /* =========================================
-   1. Colors and shared values
-   Change a value here and it updates everywhere it is used.
+   1. Colors and shared values (CSS custom properties)
+   Names starting with -- are variables. :root is the top of the page,
+   so every rule can use them with var(--name). Change a value here and
+   it updates everywhere it is used.
    ========================================= */
 :root {
   --color-text: #1E293B;      /* main text */
   --color-muted: #475569;     /* secondary text */
   --color-primary: #1E4E8C;   /* headings, deep trustworthy blue */
-  --color-secondary: #5B3FA8; /* violet, used in the wordmark gradient */
+  --color-secondary: #5B3FA8; /* violet, used in the wordmark and button gradients */
   --color-accent: #F2A65A;    /* warm decoration only, never used for text */
   --color-accent-2: #E8789A;  /* soft rose, pairs with the accent in gradients */
 
@@ -31,7 +33,8 @@
    2. Base styles
    ========================================= */
 
-/* Make width and height include padding and borders */
+/* Make width and height include padding and borders, so boxes are
+   exactly the size we set and layouts are easier to predict */
 * {
   box-sizing: border-box;
 }
@@ -65,7 +68,23 @@ h3 {
   line-height: 1.2;
 }
 
-/* Centers the content and keeps it from getting too wide */
+/* Make sure anything with the "hidden" attribute stays hidden.
+   Why it's needed: rules like .choice { display: flex } would otherwise
+   override "hidden" and show elements script.js is trying to hide.
+   !important means "this rule wins over other rules". */
+[hidden] {
+  display: none !important;
+}
+
+/* Headings and question groups that script.js moves focus to (tabindex="-1")
+   don't need a focus outline, because they aren't clickable.
+   Buttons and checkboxes keep their outlines (see section 9). */
+[tabindex="-1"]:focus {
+  outline: none;
+}
+
+/* Centers the content and keeps it from getting too wide.
+   margin: 0 auto splits the leftover space evenly on the left and right. */
 .container {
   max-width: 70rem;
   margin: 0 auto;
@@ -77,10 +96,12 @@ h3 {
    A see-through white background + backdrop-filter, which blurs
    whatever is behind the element (here, the colorful page background).
    The -webkit- line is needed for older Safari versions.
-   Shared by the intro callout and the cards.
+   Listing several selectors with commas shares one set of styles:
+   the intro callout, the category cards, and the question boxes.
    ========================================= */
 .intro-callout,
-.card {
+.card,
+.flow-card {
   background-color: var(--glass-bg);
   -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(140%);
   backdrop-filter: blur(var(--glass-blur)) saturate(140%);
@@ -96,13 +117,16 @@ h3 {
   padding: 4.5rem 0 2.5rem;
 }
 
-/* Lines up the icon and the name side by side */
+/* Flexbox lines up the icon and the name side by side;
+   align-items: center lines them up vertically */
 .wordmark {
   display: flex;
   align-items: center;
   gap: 0.9rem;
   margin: 0;
-  /* Grows smoothly from phone size (2.5rem) to desktop size (4rem) */
+  /* clamp(minimum, preferred, maximum): the size follows 6% of the screen
+     width (6vw) but never goes below 2.5rem or above 4rem. This makes the
+     heading resize smoothly between phone and desktop without media queries. */
   font-size: clamp(2.5rem, 6vw, 4rem);
   font-weight: 800;
   letter-spacing: -0.03em;
@@ -120,7 +144,10 @@ h3 {
               0 6px 16px rgba(91, 63, 168, 0.3);
 }
 
-/* A forward-pointing chevron, drawn with two borders and rotated 45 degrees */
+/* A forward-pointing chevron, drawn with two borders and rotated 45 degrees.
+   ::after creates an extra decorative box with no HTML needed.
+   position: absolute places it relative to the icon (which is position: relative),
+   and translate(-50%, -50%) centers it on that spot. */
 .wordmark-icon::after {
   content: "";
   position: absolute;
@@ -169,7 +196,8 @@ h3 {
   line-height: 1.5;
 }
 
-/* Warm gradient bar on the left edge of the callout (decoration only) */
+/* Warm gradient bar on the left edge of the callout (decoration only).
+   Setting both top and bottom stretches the bar to the callout's height. */
 .intro-callout::before {
   content: "";
   position: absolute;
@@ -204,8 +232,10 @@ h3 {
    7. Cards
    ========================================= */
 
-/* Remove bullets and lay the cards out in a grid.
-   auto-fit + minmax: one column on phones, more columns on wider screens. */
+/* Remove bullets and lay the cards out in a responsive grid.
+   minmax(16rem, 1fr): each column is at least 16rem wide and shares extra space.
+   auto-fit: fit as many of those columns as the screen allows.
+   Result: one column on phones, more on wider screens, with no media queries. */
 .card-list {
   list-style: none;
   margin: 0;
@@ -244,7 +274,8 @@ h3 {
 /* Hover: the card lifts slightly and its shadow deepens.
    (hover: hover) means "only on devices with a mouse or trackpad",
    so the effect doesn't get stuck on touch screens.
-   The cursor stays normal because the cards aren't clickable yet. */
+   The cursor stays normal because the card itself isn't clickable;
+   only the Vital Documents button inside it is. */
 @media (hover: hover) {
   .card:hover {
     transform: translateY(-4px);
@@ -277,4 +308,202 @@ h3 {
 
 .site-footer p {
   margin: 0;
+}
+
+/* =========================================
+   9. Buttons
+   ========================================= */
+/* Shared button basics. Buttons don't use the page font by default,
+   so font: inherit makes them match the rest of the text. */
+.primary-button,
+.secondary-button,
+.back-button {
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 999px;
+  transition: box-shadow 200ms ease, background-color 200ms ease;
+}
+
+/* Main action button: blue-to-violet gradient with white text */
+.primary-button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  color: #FFFFFF;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3),
+              0 6px 16px rgba(91, 63, 168, 0.25);
+}
+
+.primary-button:hover {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3),
+              0 10px 24px rgba(91, 63, 168, 0.35);
+}
+
+/* Less important actions, like "Change my answers" */
+.secondary-button {
+  padding: 0.65rem 1.3rem;
+  border: 1px solid rgba(30, 78, 140, 0.35);
+  color: var(--color-primary);
+  background-color: rgba(255, 255, 255, 0.7);
+}
+
+.secondary-button:hover {
+  background-color: #FFFFFF;
+}
+
+/* Text-style button for going back */
+.back-button {
+  padding: 0.4rem 0;
+  border: none;
+  color: var(--color-primary);
+  background: none;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+/* A clear outline when someone uses the keyboard to reach a button or choice.
+   :focus-visible shows it for keyboard users but not after a mouse click. */
+.primary-button:focus-visible,
+.secondary-button:focus-visible,
+.back-button:focus-visible,
+.choice input:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+/* =========================================
+   10. Category card extras
+   ========================================= */
+.card-button {
+  margin-top: 1.25rem;
+}
+
+/* "Coming soon" label on categories that don't work yet.
+   ".card .card-status" is more specific than ".card p" (two classes beat
+   one class + one tag), so this margin wins over the margin: 0 in section 7. */
+.card .card-status {
+  margin-top: 1rem;
+  color: var(--color-muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+/* =========================================
+   11. Vital Documents flow
+   ========================================= */
+.flow {
+  padding: 1.5rem 0 4rem;
+}
+
+.flow h2 {
+  margin: 0.5rem 0 0;
+  font-size: clamp(1.6rem, 3.5vw, 2.1rem);
+  letter-spacing: -0.01em;
+}
+
+/* Each step of the flow (questions, message, results) sits in its own
+   glass box. The glass look comes from section 3; this adds size and spacing. */
+.flow-card {
+  max-width: 48rem;
+  margin-top: 1.5rem;
+  padding: 1.75rem;
+}
+
+/* Remove the browser's default box around each group of choices */
+fieldset {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+legend {
+  padding: 0;
+  color: var(--color-primary);
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.hint {
+  margin: 0.25rem 0 0;
+  color: var(--color-muted);
+}
+
+/* Choices use the same auto-fit grid technique as the cards (section 7):
+   one column on phones, two or more on wider screens */
+.choice-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+/* Each choice is a large, easy-to-tap row. Clicking anywhere on the
+   label checks the box, because the input is inside the label. */
+.choice {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(30, 78, 140, 0.2);
+  border-radius: 0.9rem;
+  background-color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+}
+
+/* accent-color tints the browser's own checkbox and radio button */
+.choice input {
+  width: 1.2rem;
+  height: 1.2rem;
+  margin: 0;
+  accent-color: var(--color-primary);
+}
+
+/* :has() styles the label when the input inside it is checked,
+   so the whole row is highlighted, not just the small box */
+.choice:has(input:checked) {
+  border-color: var(--color-primary);
+  background-color: #EAF1FB;
+}
+
+/* Error text under each question. The element is always on the page (empty
+   until script.js fills it) so screen readers reliably announce changes. */
+.form-error {
+  margin: 0.75rem 0;
+  color: #B42318;  /* dark red, readable on light backgrounds */
+  font-weight: 600;
+}
+
+/* The safeguard message gets a warm tint so it stands out from the questions */
+.flow-message {
+  background-color: rgba(253, 241, 228, 0.8);
+  border-left: 0.35rem solid var(--color-accent);
+}
+
+.flow-card h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.3rem;
+}
+
+.flow-message p {
+  margin: 0 0 1.25rem;
+}
+
+.steps-list {
+  margin: 0.75rem 0 1.25rem;
+  padding-left: 1.5rem;
+}
+
+.steps-list li {
+  margin-bottom: 0.75rem;
+  padding-left: 0.25rem;
+}
+
+/* Separated from the steps by a thin line so it reads as a note, not a step */
+.disclaimer {
+  margin: 0 0 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(30, 78, 140, 0.15);
+  color: var(--color-muted);
+  font-size: 0.95rem;
 }
