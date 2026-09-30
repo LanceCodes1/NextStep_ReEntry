@@ -130,3 +130,36 @@ The Vital Documents flow works as intended and includes working safeguards for i
 
 **What I learned:**  
 Testing should include more than the expected user path. Trying uncertain, contradictory, and boundary inputs helped me verify that the safeguards actually change the program's behavior instead of existing only as a warning.
+
+
+## Entry 5 — V4 Full MVP Expansion and Domain Verification
+
+**Date / Week / Day:** September 30, 2026 — Week 3
+
+**Activity:** Expanded NextStep from one working category to the complete five-category MVP and manually verified the decision flows.
+
+**Goal:** Complete the core NextStep MVP while keeping the application simple, explainable, and within scope. I wanted all five categories to provide useful next steps while stopping or redirecting users when the tool did not have enough information to make a responsible recommendation.
+
+**Prompt:**  
+I instructed Claude to preserve the tested Vital Documents flow and extend the same general interaction pattern to Transportation, Housing, Employment, and Benefits. I provided the questions, possible user situations, domain-specific concerns, and safety constraints for each category. I also required Claude to reuse existing architecture where reasonable, keep the JavaScript beginner-readable, avoid APIs or databases, preserve accessibility and navigation, and stop before making recommendations in situations involving uncertainty, conflicting answers, supervision requirements, or benefit eligibility.
+
+**Why I prompted it this way:**  
+Before asking AI to build the remaining categories, I thought through common reentry barriers based on my experience. Transportation, housing, employment, and benefits do not all work the same way, so I did not want AI to create generic questions or make assumptions about what returning citizens need.
+
+**AI result:**  
+Claude expanded NextStep so all five categories became interactive. It reused shared JavaScript logic while allowing individual categories to have different questions, recommendations, and safeguards.
+
+**What I noticed:**  
+The application worked across the major paths I tested, but I noticed that the AI-generated Transportation flow left out help with actually using public transit. I also noticed that the Housing recommendations described program rules too generally and did not clearly include issues such as work restrictions, restrictions on leaving the property, or blackout periods.
+
+**What I questioned or verified:**  
+I manually tested normal and edge-case paths across the application. I tested contradictory Transportation answers, the Housing supervision safeguard, the Employment background-barrier path, uncertain Benefits input, a normal Benefits path, and the original Vital Documents contradiction safeguard. I also regression-tested a normal Vital Documents recommendation and checked the application at approximately phone width for layout problems.
+
+**What changed in the next iteration:**  
+I gave Claude a tightly scoped correction prompt. I added "Using public transit" as a Transportation need and required three general transit-planning steps without assuming a specific agency, fare, discount, or eligibility. I also required the Housing program guidance to explicitly include questions about work restrictions, leaving the property, and blackout or adjustment periods. I prohibited changes to the architecture, styling, other categories, safeguards, Prompt Log, and unrelated functionality.
+  
+**Final result:**  
+V4 passed the targeted correction tests. All five categories are working, the tested safeguards remain intact, and the original Vital Documents functionality passed regression testing. I verified the final Transportation correction, the updated Housing program guidance, and the Housing supervision safeguard. I also checked the application at approximately phone width and confirmed that the layout remained usable without cut-off buttons or horizontal layout problems. With the core MVP verified, I froze V4 functionality for gate preparation.
+
+**What I learned:**  
+A program can work technically and still miss important parts of the real problem. My domain knowledge helped me identify gaps that were not obvious from simply checking whether the code ran. Verification includes reviewing whether the content and decision logic actually match the people and situations the tool is supposed to support.

@@ -275,7 +275,7 @@ h3 {
    (hover: hover) means "only on devices with a mouse or trackpad",
    so the effect doesn't get stuck on touch screens.
    The cursor stays normal because the card itself isn't clickable;
-   only the Vital Documents button inside it is. */
+   only the button inside it is. */
 @media (hover: hover) {
   .card:hover {
     transform: translateY(-4px);
@@ -379,18 +379,9 @@ h3 {
   margin-top: 1.25rem;
 }
 
-/* "Coming soon" label on categories that don't work yet.
-   ".card .card-status" is more specific than ".card p" (two classes beat
-   one class + one tag), so this margin wins over the margin: 0 in section 7. */
-.card .card-status {
-  margin-top: 1rem;
-  color: var(--color-muted);
-  font-size: 0.9rem;
-  font-weight: 600;
-}
 
 /* =========================================
-   11. Vital Documents flow
+   11. Category flow (shared by all five categories)
    ========================================= */
 .flow {
   padding: 1.5rem 0 4rem;
@@ -427,6 +418,14 @@ legend {
 .hint {
   margin: 0.25rem 0 0;
   color: var(--color-muted);
+}
+
+/* Housing's extra supervision question: a thin line and space
+   separate it from the first question in the same box */
+.extra-question {
+  margin-top: 1.75rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(30, 78, 140, 0.15);
 }
 
 /* Choices use the same auto-fit grid technique as the cards (section 7):
@@ -497,6 +496,17 @@ legend {
 .steps-list li {
   margin-bottom: 0.75rem;
   padding-left: 0.25rem;
+}
+
+/* Category-specific safety note (Housing, Employment, Benefits).
+   Same warm style as the safeguard message so it reads as a caution. */
+.result-note {
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+  border-left: 0.3rem solid var(--color-accent);
+  border-radius: 0.5rem;
+  background-color: rgba(253, 241, 228, 0.8);
+  font-weight: 600;
 }
 
 /* Separated from the steps by a thin line so it reads as a note, not a step */

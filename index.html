@@ -33,74 +33,81 @@
     </section>
 
     <!-- Focus areas: five cards, shown in no particular order of importance.
-         id="categories" lets script.js hide this section while the Vital Documents flow is open. -->
+         id="categories" lets script.js hide this section while a category flow is open. -->
     <section class="areas" id="categories">
       <h2>Where would you like to begin?</h2>
       <p class="section-note">Everyone's situation is different. Start with whatever feels most pressing to you.</p>
 
       <!-- role="list" keeps screen readers announcing this as a list after CSS removes the bullets -->
       <ul class="card-list" role="list">
+        <!-- Each card has a real <button> (not a clickable div), so it works with the keyboard
+             and screen readers automatically. data-category="..." stores which category the
+             button opens; script.js reads it with button.dataset.category. The value must
+             match a key in the CATEGORIES object in script.js. -->
         <li class="card">
           <h3>Vital Documents</h3>
           <p>Getting copies of important papers, like a state ID, birth certificate, or Social Security card.</p>
-          <!-- The only working category in V3. A real <button> (not a clickable div) works with
-               the keyboard and screen readers automatically. script.js listens for its click. -->
-          <button type="button" class="primary-button card-button" id="start-documents">Explore Vital Documents</button>
+          <button type="button" class="primary-button card-button category-button" data-category="vital-documents">Explore Vital Documents</button>
         </li>
         <li class="card">
           <h3>Transportation</h3>
           <p>Ways to get around, like public transit or a driver's license, so you can reach work, appointments, and family.</p>
-          <!-- "Coming soon" (here and below) is plain text, not a button, so it doesn't suggest the category works yet -->
-          <p class="card-status">Coming soon</p>
+          <button type="button" class="primary-button card-button category-button" data-category="transportation">Explore Transportation</button>
         </li>
         <li class="card">
           <h3>Housing</h3>
           <p>Finding a safe place to stay, whether for tonight or for the longer term.</p>
-          <p class="card-status">Coming soon</p>
+          <button type="button" class="primary-button card-button category-button" data-category="housing">Explore Housing</button>
         </li>
         <li class="card">
           <h3>Employment</h3>
           <p>Looking for work, building a resume, and preparing for interviews.</p>
-          <p class="card-status">Coming soon</p>
+          <button type="button" class="primary-button card-button category-button" data-category="employment">Explore Employment</button>
         </li>
         <li class="card">
           <h3>Benefits</h3>
           <p>Learning about programs that may help with food, health care, or income.</p>
-          <p class="card-status">Coming soon</p>
+          <button type="button" class="primary-button card-button category-button" data-category="benefits">Explore Benefits</button>
         </li>
       </ul>
     </section>
 
-    <!-- Vital Documents flow: hidden until the user picks Vital Documents.
-         The "hidden" attribute hides an element; script.js turns it on and off
-         to move between "screens" without loading a new page. -->
-    <section class="flow" id="documents-flow" hidden>
+    <!-- Category flow: ONE shared section used by all five categories.
+         It is hidden until the user picks a category. script.js fills in the title,
+         questions, and choices from the CATEGORIES data, so this HTML stays the same
+         no matter which category is open. -->
+    <section class="flow" id="category-flow" hidden>
       <button type="button" class="back-button" id="back-to-categories">&larr; Back to all categories</button>
-      <!-- tabindex="-1" lets script.js move focus to this heading (see showDocumentsFlow)
-           without adding it to the normal Tab order -->
-      <h2 id="documents-title" tabindex="-1">Vital Documents</h2>
+      <!-- tabindex="-1" lets script.js move focus to this heading (see openCategory)
+           without adding it to the normal Tab order. The text is filled in by script.js. -->
+      <h2 id="flow-title" tabindex="-1"></h2>
 
-      <!-- Question 1: which documents the user has (choose all that apply).
-           novalidate turns off the browser's built-in error popups; script.js shows its own messages.
-           Each checkbox's value="" matches a key in script.js, which is how answers connect to data. -->
-      <form class="flow-card" id="have-form" novalidate>
+      <!-- Question 1. novalidate turns off the browser's built-in error popups;
+           script.js shows its own messages instead. -->
+      <form class="flow-card" id="question1-form" novalidate>
         <!-- <fieldset> groups related choices, and <legend> is the question screen readers
-             announce for the whole group. Checkboxes allow more than one answer. -->
-        <fieldset id="have-fieldset" tabindex="-1">
-          <legend>Which of these documents do you currently have access to?</legend>
-          <p class="hint">Choose all that apply.</p>
+             announce for the whole group. The empty choice-list is filled by buildChoices()
+             with checkboxes (choose several) or radio buttons (choose one), depending on the category. -->
+        <fieldset id="question1-fieldset" tabindex="-1">
+          <legend id="question1-legend"></legend>
+          <p class="hint" id="question1-hint"></p>
+          <div class="choice-list" id="question1-choices"></div>
+        </fieldset>
+
+        <!-- Housing only: supervision check (the housing safeguard). Written here in the HTML
+             because only one category uses it; script.js shows it only when Housing is open. -->
+        <fieldset class="extra-question" id="supervision-fieldset" hidden>
+          <legend>Is your current or planned housing required or approved by parole, probation, or another supervision program?</legend>
           <div class="choice-list">
-            <label class="choice"><input type="checkbox" name="have" value="birth-certificate"> Birth Certificate</label>
-            <label class="choice"><input type="checkbox" name="have" value="social-security-card"> Social Security Card</label>
-            <label class="choice"><input type="checkbox" name="have" value="state-id"> State ID</label>
-            <label class="choice"><input type="checkbox" name="have" value="drivers-license"> Driver's License</label>
-            <label class="choice"><input type="checkbox" name="have" value="none"> None of These</label>
-            <label class="choice"><input type="checkbox" name="have" value="not-sure"> I'm Not Sure</label>
+            <label class="choice"><input type="radio" name="supervision" value="yes"> Yes</label>
+            <label class="choice"><input type="radio" name="supervision" value="no"> No</label>
+            <label class="choice"><input type="radio" name="supervision" value="not-sure"> I'm not sure</label>
           </div>
         </fieldset>
+
         <!-- Starts empty. aria-live="polite" makes screen readers announce the error
              when script.js fills it in, after they finish what they are currently reading. -->
-        <p class="form-error" id="have-error" aria-live="polite"></p>
+        <p class="form-error" id="question1-error" aria-live="polite"></p>
         <button type="submit" class="primary-button">Continue</button>
       </form>
 
@@ -112,28 +119,25 @@
         <button type="button" class="secondary-button change-answers">Change my answers</button>
       </div>
 
-      <!-- Question 2: which missing document to start with.
-           Radio buttons that share the same name="" allow only ONE choice.
-           All four are written here; script.js hides the ones the user already has. -->
-      <form class="flow-card" id="first-form" novalidate hidden>
-        <fieldset id="first-fieldset" tabindex="-1">
-          <legend>Which document would you like help with first?</legend>
-          <div class="choice-list">
-            <label class="choice"><input type="radio" name="first-document" value="birth-certificate"> Birth Certificate</label>
-            <label class="choice"><input type="radio" name="first-document" value="social-security-card"> Social Security Card</label>
-            <label class="choice"><input type="radio" name="first-document" value="state-id"> State ID</label>
-            <label class="choice"><input type="radio" name="first-document" value="drivers-license"> Driver's License</label>
-          </div>
+      <!-- Question 2: "Which would you like help with first?"
+           Only the needs that fit the user's first answer are added here by script.js.
+           Radio buttons that share the same name allow only ONE choice. -->
+      <form class="flow-card" id="question2-form" novalidate hidden>
+        <fieldset id="question2-fieldset" tabindex="-1">
+          <legend id="question2-legend"></legend>
+          <div class="choice-list" id="question2-choices"></div>
         </fieldset>
-        <p class="form-error" id="first-error" aria-live="polite"></p>
+        <p class="form-error" id="question2-error" aria-live="polite"></p>
         <button type="submit" class="primary-button">Show next steps</button>
       </form>
 
       <!-- Result: the <ol> (numbered list) starts empty; script.js adds the three steps.
+           result-note holds a category-specific safety note (hidden when a category has none).
            The disclaimer is written here in the HTML so it always appears with the steps. -->
       <div class="flow-card" id="next-steps" hidden>
         <h3 id="next-steps-title" tabindex="-1"></h3>
         <ol class="steps-list" id="next-steps-list"></ol>
+        <p class="result-note" id="result-note" hidden></p>
         <p class="disclaimer">These are general ideas, not legal advice or official requirements. Rules, costs, and processing times vary by state and situation, so check official government sources or talk with a trusted reentry professional.</p>
         <button type="button" class="secondary-button change-answers">Change my answers</button>
       </div>
